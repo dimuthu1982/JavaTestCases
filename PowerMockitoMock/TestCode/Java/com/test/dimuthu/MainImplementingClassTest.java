@@ -10,7 +10,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({MyStaticClass.class})
+@PrepareForTest({MyStaticClass.class,MainImplementingClass.class})
 public class MainImplementingClassTest extends TestCase {
 
 	private MyStaticClass myStaticClass;
@@ -29,17 +29,26 @@ public class MainImplementingClassTest extends TestCase {
 		PowerMockito.mockStatic(MyStaticClass.class);
 		myStaticClass = PowerMockito.mock(MyStaticClass.class);
 		PowerMockito.when(MyStaticClass.getInstance()).thenReturn(myStaticClass);
-		
+
 		PowerMockito.when(myStaticClass.returnNumber()).thenReturn(10);
 		int returnVal = spyObject.calculate();
 		assertEquals(500, returnVal);
 	}
-	
+
 	/*
 	 * Following is a sample of a private method being testing.
 	 */
 	public void testGetSecondNumber() throws Exception{
 		int returnVal = Whitebox.invokeMethod(spyObject, "getSecondNumber", Mockito.eq((3)));
 		assertEquals(4, returnVal);
+	}
+
+	/*
+	 * Following is a sample of private method being mock
+	 */
+	public void testCalculate_MockPrivatemethod() throws Exception{
+		PowerMockito.doReturn(30).when(spyObject, "getSecondNumber", Mockito.eq((1)));
+		int returnVal = spyObject.calculate();
+		assertEquals(300, returnVal);
 	}
 }
