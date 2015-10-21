@@ -46,9 +46,18 @@ public class MainImplementingClassTest extends TestCase {
 	/*
 	 * Following is a sample of private method being mock
 	 */
-	public void testCalculate_MockPrivatemethod() throws Exception{
+	public void testCalculate_MockPrivateMethod() throws Exception{
 		PowerMockito.doReturn(30).when(spyObject, "getSecondNumber", Mockito.eq((1)));
 		int returnVal = spyObject.calculate();
 		assertEquals(300, returnVal);
+	}
+	
+	/*
+	 * Following is a sample of suppress a method called MainImplementingClass.getThirdNumber()
+	 */
+	public void testCalculate_SuppressMethod() throws Exception{
+		PowerMockito.suppress(PowerMockito.method(MainImplementingClass.class, "getThirdNumber"));
+		int returnVal = spyObject.calculate();
+		assertEquals(0, returnVal);
 	}
 }
