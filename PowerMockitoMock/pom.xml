@@ -7,10 +7,10 @@
 	<artifactId>MockitoTesting</artifactId>
 	<version>1.0.0</version>
 
-
 	<properties>
 		<powermock.version>1.6.2</powermock.version>
 	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.powermock</groupId>

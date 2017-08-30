@@ -13,11 +13,15 @@ public class MainImplementingClass {
 	}
 	
 	public int calculate() {
-		return MyStaticClass.getInstance().returnNumber() * getSecondNumber(1) * 10;
+		return MyStaticClass.getInstance().returnNumber() * getPrivateMethodNumber(1) * 10 + getTempMethod();
 	}
 	
-	private int getSecondNumber(int number){
+	private int getPrivateMethodNumber(int number){
 		return 4 + number;
+	}
+	
+	public int getTempMethod(){
+		return 1;
 	}
 	
 }

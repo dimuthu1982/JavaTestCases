@@ -1,13 +1,18 @@
 package com.test.dimuthu;
 
-import junit.framework.TestCase;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+
+import junit.framework.TestCase;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({MyStaticClass.class,MainImplementingClass.class})
@@ -26,20 +31,21 @@ public class MainImplementingClassTest extends TestCase {
 	 * Following is a sample of a class being mock. This can be done for Utility classes
 	 */
 	public void testCalculate() {
-		PowerMockito.mockStatic(MyStaticClass.class);
-		myStaticClass = PowerMockito.mock(MyStaticClass.class);
-		PowerMockito.when(MyStaticClass.getInstance()).thenReturn(myStaticClass);
-
-		PowerMockito.when(myStaticClass.returnNumber()).thenReturn(10);
+		mockStatic(MyStaticClass.class);
+		myStaticClass = mock(MyStaticClass.class);
+		
+		when(MyStaticClass.getInstance()).thenReturn(myStaticClass);
+		when(myStaticClass.returnNumber()).thenReturn(10);
+		
 		int returnVal = spyObject.calculate();
-		assertEquals(500, returnVal);
+		assertEquals(501, returnVal);
 	}
 
 	/*
 	 * Following is a sample of a private method being testing.
 	 */
 	public void testGetSecondNumber() throws Exception{
-		int returnVal = Whitebox.invokeMethod(spyObject, "getSecondNumber", Mockito.eq((3)));
+		int returnVal = Whitebox.invokeMethod(spyObject, "getPrivateMethodNumber", Mockito.eq((3)));
 		assertEquals(4, returnVal);
 	}
 
@@ -47,17 +53,20 @@ public class MainImplementingClassTest extends TestCase {
 	 * Following is a sample of private method being mock
 	 */
 	public void testCalculate_MockPrivateMethod() throws Exception{
-		PowerMockito.doReturn(30).when(spyObject, "getSecondNumber", Mockito.eq((1)));
+		PowerMockito.doReturn(30).when(spyObject, "getPrivateMethodNumber", Mockito.eq((1)));
 		int returnVal = spyObject.calculate();
-		assertEquals(300, returnVal);
+		assertEquals(301, returnVal);
 	}
 	
 	/*
-	 * Following is a sample of suppress a method called MainImplementingClass.getThirdNumber()
+	 * Following is a sample of suppress a method called MainImplementingClass.getTempMethod()
 	 */
-	public void testCalculate_SuppressMethod() throws Exception{
-		PowerMockito.suppress(PowerMockito.method(MainImplementingClass.class, "getThirdNumber"));
-		int returnVal = spyObject.calculate();
-		assertEquals(0, returnVal);
+	@Test(expected = NullPointerException.class)
+	public void testCalculate_ExceptionMethod() throws Exception{
+		PowerMockito.suppress(PowerMockito.method(MainImplementingClass.class, "getTempMethod"));
+		PowerMockito.doThrow(new NullPointerException("Null pointer Occured in getTempMethod(")).when(spyObject).getTempMethod();
+		
+		spyObject.calculate();
 	}
+
 }
