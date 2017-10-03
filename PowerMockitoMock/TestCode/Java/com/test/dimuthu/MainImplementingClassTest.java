@@ -15,12 +15,14 @@ import org.powermock.reflect.Whitebox;
 import junit.framework.TestCase;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({MyStaticClass.class,MainImplementingClass.class})
+@PrepareForTest({MyStaticClass.class,MainImplementingClass.class, ExternalClass.class})
 public class MainImplementingClassTest extends TestCase {
 
 	private MyStaticClass myStaticClass;
 
 	private MainImplementingClass spyObject;
+
+	private ExternalClass externalClass = new ExternalClass(10);
 
 	public void setUp() throws Exception {
 		spyObject = PowerMockito.spy(MainImplementingClass.getInstance());
@@ -33,10 +35,10 @@ public class MainImplementingClassTest extends TestCase {
 	public void testCalculate() {
 		mockStatic(MyStaticClass.class);
 		myStaticClass = mock(MyStaticClass.class);
-		
+
 		when(MyStaticClass.getInstance()).thenReturn(myStaticClass);
 		when(myStaticClass.returnNumber()).thenReturn(10);
-		
+
 		int returnVal = spyObject.calculate();
 		assertEquals(501, returnVal);
 	}
@@ -57,7 +59,7 @@ public class MainImplementingClassTest extends TestCase {
 		int returnVal = spyObject.calculate();
 		assertEquals(301, returnVal);
 	}
-	
+
 	/*
 	 * Following is a sample of suppress a method called MainImplementingClass.getTempMethod()
 	 */
@@ -65,8 +67,20 @@ public class MainImplementingClassTest extends TestCase {
 	public void testCalculate_ExceptionMethod() throws Exception{
 		PowerMockito.suppress(PowerMockito.method(MainImplementingClass.class, "getTempMethod"));
 		PowerMockito.doThrow(new NullPointerException("Null pointer Occured in getTempMethod(")).when(spyObject).getTempMethod();
-		
+
 		spyObject.calculate();
+	}
+
+	/*
+	 * Following sample has mocked the constructor creation on ExternalClass. With "whenNew" it returns an instance of externalClass when an instance is created with withArguments(50)
+	 */
+	@Test
+	public void testCarlulateByExternalClass() throws Exception{
+		PowerMockito.whenNew(ExternalClass.class).withArguments(50).thenReturn(externalClass);
+
+		int returnVal = spyObject.calculateByExternalClass(50);
+
+		assertEquals(1000, returnVal);
 	}
 
 }

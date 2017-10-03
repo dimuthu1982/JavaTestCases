@@ -24,4 +24,8 @@ public class MainImplementingClass {
 		return 1;
 	}
 	
+	public int calculateByExternalClass(int value) {
+		return new ExternalClass(value).calculate();
+	}
+	
 }
